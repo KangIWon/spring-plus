@@ -8,6 +8,9 @@ import org.example.expert.domain.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +26,14 @@ public class UserController {
     @PutMapping("/users")
     public void changePassword(@AuthenticationPrincipal AuthUser authUser, @RequestBody UserChangePasswordRequest userChangePasswordRequest) {
         userService.changePassword(authUser.getUserId(), userChangePasswordRequest);
+    }
+
+    @PutMapping("/users/profiles/images")
+    public ResponseEntity<Void> saveProfileImages(
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestPart(name = "image")MultipartFile image
+    ) throws IOException {
+        userService.updateProfileImage(authUser.getUserId(), image);
+        return ResponseEntity.ok().build();
     }
 }
